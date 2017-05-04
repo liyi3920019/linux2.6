@@ -199,6 +199,7 @@ unsigned int mnt_get_count(struct vfsmount *mnt)
 static struct vfsmount *alloc_vfsmnt(const char *name)
 {
 	struct vfsmount *mnt = kmem_cache_zalloc(mnt_cache, GFP_KERNEL);
+printk("allocmnt=%p\n",mnt);
 	if (mnt) {
 		int err;
 
@@ -675,11 +676,13 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void 
 {
 	struct vfsmount *mnt;
 	struct dentry *root;
-
+printk("#-ENODEV=%d\n",-ENODEV);
+printk("#-ENOMEM=%d\n",-ENOMEM);
 	if (!type)
 		return ERR_PTR(-ENODEV);
 
 	mnt = alloc_vfsmnt(name);
+printk("#mnt0=%p\n",mnt);
 	if (!mnt)
 		return ERR_PTR(-ENOMEM);
 
@@ -687,11 +690,12 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void 
 		mnt->mnt_flags = MNT_INTERNAL;
 
 	root = mount_fs(type, flags, name, data);
+printk("#root1=%d\n",root);
 	if (IS_ERR(root)) {
 		free_vfsmnt(mnt);
+printk("#root=%d\n",ERR_CAST(root));
 		return ERR_CAST(root);
 	}
-
 	mnt->mnt_root = root;
 	mnt->mnt_sb = root->d_sb;
 	mnt->mnt_mountpoint = mnt->mnt_root;
@@ -2017,19 +2021,21 @@ static int do_new_mount(struct path *path, char *type, int flags,
 {
 	struct vfsmount *mnt;
 	int err;
-
+printk("-EINVAL=%d\n",-EINVAL);
 	if (!type)
 		return -EINVAL;
-
+printk("-EPERM=%d\n",-EPERM);
 	/* we need capabilities... */
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 
 	mnt = do_kern_mount(type, flags, name, data);
+printk("mnt=%d\n",mnt);
 	if (IS_ERR(mnt))
 		return PTR_ERR(mnt);
 
 	err = do_add_mount(mnt, path, mnt_flags);
+printk("err=%d\n",err);
 	if (err)
 		mntput(mnt);
 	return err;
@@ -2287,30 +2293,33 @@ int copy_mount_string(const void __user *data, char **where)
  */
 long do_mount(char *dev_name, char *dir_name, char *type_page,
 		  unsigned long flags, void *data_page)
-{
+{printk("~~~~~~~~1\n");
 	struct path path;
+printk("~~~~~~~~2\n");
 	int retval = 0;
+printk("~~~~~~~~3\n");
 	int mnt_flags = 0;
-
+printk("~~~~~~~~4\n");
 	/* Discard magic */
 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
 		flags &= ~MS_MGC_MSK;
-
 	/* Basic sanity checks */
-
+printk("~~~~~~~~5\n");
 	if (!dir_name || !*dir_name || !memchr(dir_name, 0, PAGE_SIZE))
 		return -EINVAL;
-
+printk("~~~~~~~~6\n");
 	if (data_page)
 		((char *)data_page)[PAGE_SIZE - 1] = 0;
-
+printk("dir_name=%p,%c,%s\n",dir_name,*dir_name,*dir_name);
 	/* ... and get the mountpoint */
 	retval = kern_path(dir_name, LOOKUP_FOLLOW, &path);
+printk("retval=%d\n",retval);
 	if (retval)
 		return retval;
-
+printk("dir_name=%p,%c,%s\n",dir_name,*dir_name,*dir_name);
 	retval = security_sb_mount(dev_name, &path,
 				   type_page, flags, data_page);
+printk("retval0=%d\n",retval);
 	if (retval)
 		goto dput_out;
 
@@ -2339,19 +2348,26 @@ long do_mount(char *dev_name, char *dir_name, char *type_page,
 		   MS_STRICTATIME);
 
 	if (flags & MS_REMOUNT)
-		retval = do_remount(&path, flags & ~MS_REMOUNT, mnt_flags,
+	{	retval = do_remount(&path, flags & ~MS_REMOUNT, mnt_flags,
 				    data_page);
+printk("retval2=%d\n",retval);}
 	else if (flags & MS_BIND)
-		retval = do_loopback(&path, dev_name, flags & MS_REC);
+	{	retval = do_loopback(&path, dev_name, flags & MS_REC);
+printk("retval3=%d\n",retval);}
 	else if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
-		retval = do_change_type(&path, flags);
+	{	retval = do_change_type(&path, flags);
+printk("retval4=%d\n",retval);}
 	else if (flags & MS_MOVE)
-		retval = do_move_mount(&path, dev_name);
+	{	retval = do_move_mount(&path, dev_name);
+printk("retval5=%d\n",retval);}
 	else
+{printk("type_page1=%p,%c,%s\n",type_page,*type_page,*type_page);
 		retval = do_new_mount(&path, type_page, flags, mnt_flags,
 				      dev_name, data_page);
+printk("retval6=%d\n",retval);}
 dput_out:
 	path_put(&path);
+printk("retval1=%d\n",retval);
 	return retval;
 }
 
@@ -2497,25 +2513,30 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 	unsigned long data_page;
 
 	ret = copy_mount_string(type, &kernel_type);
+printk("ret1=%d,kernel_type=%s\n",ret,kernel_type);
 	if (ret < 0)
 		goto out_type;
 
 	kernel_dir = getname(dir_name);
+printk("kernel_dir=%s\n",kernel_dir);
 	if (IS_ERR(kernel_dir)) {
 		ret = PTR_ERR(kernel_dir);
 		goto out_dir;
 	}
 
 	ret = copy_mount_string(dev_name, &kernel_dev);
+printk("ret2=%d\n",ret);
 	if (ret < 0)
 		goto out_dev;
 
 	ret = copy_mount_options(data, &data_page);
+printk("ret3=%d\n",ret);
 	if (ret < 0)
 		goto out_data;
 
 	ret = do_mount(kernel_dev, kernel_dir, kernel_type, flags,
 		(void *) data_page);
+printk("ret4=%d\n",ret);
 
 	free_page(data_page);
 out_data:

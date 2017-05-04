@@ -167,15 +167,25 @@ static struct at91_eth_data __initdata ek_macb_data = {
  * NAND flash
  */
 static struct mtd_partition __initdata ek_nand_partition[] = {
-	{
-		.name	= "Partition 1",
+        {
+		.name	= "redboot",
 		.offset	= 0,
-		.size	= SZ_256K,
+		.size	= SZ_1M,
 	},
 	{
-		.name	= "Partition 2",
-		.offset	= MTDPART_OFS_NXTBLK,
-		.size	= MTDPART_SIZ_FULL,
+		.name	= "kernel linux-2.6.35",
+		.offset	= SZ_1M * 2,
+		.size	= SZ_1M,
+	},
+	{
+		.name	= "ramdisk",
+		.offset	= SZ_1M * 1,
+		.size	= SZ_1M,
+	},
+	{
+		.name	= "ramfs",
+		.offset	= SZ_1M * 4,
+		.size	= SZ_1M * 16,
 	},
 };
 

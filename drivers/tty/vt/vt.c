@@ -2875,7 +2875,7 @@ static void vc_init(struct vc_data *vc, unsigned int rows,
  */
 
 static int __init con_init(void)
-{
+{/*
 	const char *display_desc = NULL;
 	struct vc_data *vc;
 	unsigned int currcons = 0, i;
@@ -2939,6 +2939,7 @@ static int __init con_init(void)
 	register_console(&vt_console_driver);
 #endif
 	return 0;
+*/
 }
 console_initcall(con_init);
 

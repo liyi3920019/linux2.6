@@ -2304,6 +2304,7 @@ static int __init atmel_console_init(void)
 	}
 
 	return 0;
+
 }
 
 console_initcall(atmel_console_init);
