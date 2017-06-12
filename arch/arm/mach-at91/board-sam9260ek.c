@@ -173,19 +173,14 @@ static struct mtd_partition __initdata ek_nand_partition[] = {
 		.size	= SZ_1M,
 	},
 	{
-		.name	= "kernel linux-2.6.35",
-		.offset	= SZ_1M * 2,
-		.size	= SZ_1M,
-	},
-	{
-		.name	= "ramdisk",
+		.name	= "kernel",
 		.offset	= SZ_1M * 1,
 		.size	= SZ_1M,
 	},
 	{
-		.name	= "ramfs",
-		.offset	= SZ_1M * 4,
-		.size	= SZ_1M * 16,
+		.name	= "yaffs",
+		.offset	= SZ_1M * 2,
+		.size	= SZ_1M * 2,
 	},
 };
 

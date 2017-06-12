@@ -811,14 +811,11 @@ printk("$\n");
 	 * Note: s_es must be initialized as soon as possible because
 	 *       some ext2 macro-instructions depend on its value
 	 */
-printk("es->s_magic0=%p\n",es->s_magic);
 	es = (struct ext2_super_block *) (((char *)bh->b_data) + offset);
 	sbi->s_es = es;
-printk("sb->s_magic=%p\n",sb->s_magic);
 	sb->s_magic = le16_to_cpu(es->s_magic);
-printk("sb->s_magic=%p\n",sb->s_magic);
-printk("es->s_magic=%p\n",es->s_magic);
-printk("EXT2_SUPER_MAGIC=%p,%x\n",EXT2_SUPER_MAGIC,EXT2_SUPER_MAGIC);
+printk("sb->s_magic=%ld,or =%lu\n",sb->s_magic,sb->s_magic);
+printk("EXT2_SUPER_MAGIC=%ld,or =%lu\n",EXT2_SUPER_MAGIC,EXT2_SUPER_MAGIC);
 	if (sb->s_magic != EXT2_SUPER_MAGIC)
 {printk("$!\n");
 		goto cantfind_ext2;
