@@ -297,7 +297,6 @@ static int __init rdinit_setup(char *str)
 	unsigned int i;
 
 	ramdisk_execute_command = str;
-printk("!str=%s.....!\n",str);
 	/* See "auto" comment in init_setup */
 	for (i = 1; i < MAX_INIT_ARGS; i++)
 		argv_init[i] = NULL;
@@ -800,25 +799,19 @@ static int __init kernel_init(void * unused)
 	sched_init_smp();
 
 	do_basic_setup();
-
 	/* Open the /dev/console on the rootfs, this should never fail */
 	if (sys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
 		printk(KERN_WARNING "Warning: unable to open an initial console.\n");
-
 	(void) sys_dup(0);
 	(void) sys_dup(0);
 	/*
 	 * check if there is an early userspace init.  If yes, let it do all
 	 * the work
 	 */
-ramdisk_execute_command="/linuxrc";
-printk("ramdisk_execute_command0=%s\n",ramdisk_execute_command);
 	if (!ramdisk_execute_command)
 		ramdisk_execute_command = "/init";
-printk("ramdisk_execute_command1=%s\n",ramdisk_execute_command);
 	if (sys_access((const char __user *) ramdisk_execute_command, 0) != 0) {
 		ramdisk_execute_command = NULL;
-printk("ramdisk_execute_command2=%s\n",ramdisk_execute_command);
 		prepare_namespace();
 	}
 

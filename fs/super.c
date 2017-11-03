@@ -775,12 +775,12 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
 	struct super_block *s;
 	fmode_t mode = FMODE_READ | FMODE_EXCL;
 	int error = 0;
-
 	if (!(flags & MS_RDONLY))
 		mode |= FMODE_WRITE;
 	bdev = blkdev_get_by_path(dev_name, mode, fs_type);
 	if (IS_ERR(bdev))
 		return ERR_CAST(bdev);
+
 	/*
 	 * once the super is inserted into the list by sget, s_umount
 	 * will protect the lockfs code from trying to start a snapshot
@@ -821,7 +821,6 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
 		strlcpy(s->s_id, bdevname(bdev, b), sizeof(s->s_id));
 		sb_set_blocksize(s, block_size(bdev));
 		error = fill_super(s, data, flags & MS_SILENT ? 1 : 0);
-printk("$error=%d\n",error);
 		if (error) {
 			deactivate_locked_super(s);
 			goto error;
@@ -915,24 +914,16 @@ mount_fs(struct file_system_type *type, int flags, const char *name, void *data)
 	struct super_block *sb;
 	char *secdata = NULL;
 	int error = -ENOMEM;
-printk("-ENOMEM=%d\n",-ENOMEM);
 	if (data && !(type->fs_flags & FS_BINARY_MOUNTDATA)) {
 		secdata = alloc_secdata();
-printk("secdata=%p\n",secdata);
 		if (!secdata)
 			goto out;
 
 		error = security_sb_copy_data(data, secdata);
-printk("error!=%d\n",error);
 		if (error)
 			goto out_free_secdata;
 	}
-printk("type!=%p\n",type);
-printk("flags!=%d\n",flags);
-printk("name!=%s\n",name);
-printk("data!=%s\n",data);
 	root = type->mount(type, flags, name, data);
-printk("root!=%d\n",root);
 	if (IS_ERR(root)) {
 		error = PTR_ERR(root);
 		goto out_free_secdata;
@@ -944,7 +935,6 @@ printk("root!=%d\n",root);
 	sb->s_flags |= MS_BORN;
 
 	error = security_sb_kern_mount(sb, flags, secdata);
-printk("error1!=%d\n",error);
 	if (error)
 		goto out_sb;
 

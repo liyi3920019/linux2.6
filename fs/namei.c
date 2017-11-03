@@ -2155,7 +2155,6 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 		audit_inode(pathname, dir);
 		goto ok;
 	}
-
 	if (!(open_flag & O_CREAT)) {
 		int symlink_ok = 0;
 		if (nd->last.name[nd->last.len])
@@ -2165,6 +2164,7 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 		/* we _can_ be in RCU mode here */
 		error = walk_component(nd, path, &nd->last, LAST_NORM,
 					!symlink_ok);
+
 		if (error < 0)
 			return ERR_PTR(error);
 		if (error) /* symlink */
@@ -2182,10 +2182,10 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 		}
 		audit_inode(pathname, nd->path.dentry);
 		goto ok;
+
 	}
 
 	/* create side of things */
-
 	if (nd->flags & LOOKUP_RCU) {
 		if (nameidata_drop_rcu_last(nd))
 			return ERR_PTR(-ECHILD);
@@ -2240,7 +2240,6 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 		nd->path.dentry = dentry;
 		goto common;
 	}
-
 	/*
 	 * It already exists.
 	 */

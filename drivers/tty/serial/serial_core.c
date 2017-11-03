@@ -1340,8 +1340,8 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 		 */
 		__uart_wait_until_sent(uport, uport->timeout);
 	}
-
 	uart_shutdown(tty, state);
+
 	uart_flush_buffer(tty);
 
 	tty_ldisc_flush(tty);
@@ -1647,7 +1647,6 @@ static int uart_open(struct tty_struct *tty, struct file *filp)
 	mutex_unlock(&port->mutex);
 	if (retval == 0)
 		retval = tty_port_block_til_ready(port, tty, filp);
-
 fail:
 	return retval;
 }

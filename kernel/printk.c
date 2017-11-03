@@ -1413,8 +1413,10 @@ void register_console(struct console *newcon)
 	 */
 	for (i = 0; i < MAX_CMDLINECONSOLES && console_cmdline[i].name[0];
 			i++) {
+printk("console_cmdline[%d]=%s,newcon->name=%s\n",i,console_cmdline[i].name,newcon->name);
 		if (strcmp(console_cmdline[i].name, newcon->name) != 0)
 			continue;
+printk("i=%d,newcon->name1=%s\n",i,newcon->name);
 		if (newcon->index >= 0 &&
 		    newcon->index != console_cmdline[i].index)
 			continue;

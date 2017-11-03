@@ -1489,7 +1489,6 @@ static inline unsigned int atmel_get_ip_name(struct uart_port *port)
 	char *uart = "DBGU";
 
 	atmel_port->is_usart = false;
-
 	/* USAR is regards as usart, DBGU is regards as uart */
 	if (!strncmp(ip_name, usart, 4)) {
 		dev_dbg(port->dev, "This is usart\n");
@@ -1564,7 +1563,6 @@ static int atmel_startup(struct uart_port *port)
 			pdc->dma_size = PDC_BUFFER_SIZE;
 			pdc->ofs = 0;
 		}
-
 		atmel_port->pdc_rx_idx = 0;
 
 		UART_PUT_RPR(port, atmel_port->pdc_rx[0].dma_addr);
@@ -1574,7 +1572,6 @@ static int atmel_startup(struct uart_port *port)
 		UART_PUT_RNCR(port, PDC_BUFFER_SIZE);
 	}
 	if (atmel_use_pdc_tx(port)) {
-
 		struct atmel_dma_buffer *pdc = &atmel_port->pdc_tx;
 		struct circ_buf *xmit = &port->state->xmit;
 
@@ -1731,6 +1728,7 @@ static void atmel_shutdown(struct uart_port *port)
 	if (atmel_close_hook)
 		atmel_close_hook(port);
 }
+
 
 /*
  * Flush any TX data submitted for DMA. Called when the TX circular

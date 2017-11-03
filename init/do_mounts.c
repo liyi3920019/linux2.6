@@ -312,7 +312,6 @@ void __init mount_block_root(char *name, int flags)
 	const char *b = name;
 #endif
 	get_fs_names(fs_names);
-	printk("fs_names= %s\n",fs_names);
 retry:
 	for (p = fs_names; *p; p += strlen(p)+1) {
 		int err = do_mount_root(name, p, flags, root_mount_data);
@@ -457,7 +456,6 @@ void __init prepare_namespace(void)
 
 	if (saved_root_name[0]) {
 		root_device_name = saved_root_name;
-printk("root_device_name=%s\n",root_device_name);
 		if (!strncmp(root_device_name, "mtd", 3) ||
 		    !strncmp(root_device_name, "ubi", 3)) {
 			mount_block_root(root_device_name, root_mountflags);
@@ -467,7 +465,6 @@ printk("root_device_name=%s\n",root_device_name);
 		if (strncmp(root_device_name, "/dev/", 5) == 0)
 			root_device_name += 5;
 	}
-printk("root_device_name1=%s\n",root_device_name);
 	if (initrd_load())
 		goto out;
 

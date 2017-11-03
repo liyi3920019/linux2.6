@@ -761,13 +761,11 @@ static struct block_device *bd_start_claiming(struct block_device *bdev,
 	disk = get_gendisk(bdev->bd_dev, &partno);
 	if (!disk)
 		return ERR_PTR(-ENXIO);
-
 	whole = bdget_disk(disk, 0);
 	module_put(disk->fops->owner);
 	put_disk(disk);
 	if (!whole)
 		return ERR_PTR(-ENOMEM);
-
 	/* prepare to claim, if successful, mark claiming in progress */
 	spin_lock(&bdev_lock);
 
@@ -1233,9 +1231,7 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
 			return PTR_ERR(whole);
 		}
 	}
-
 	res = __blkdev_get(bdev, mode, 0);
-
 	if (whole) {
 		/* finish claiming */
 		mutex_lock(&bdev->bd_mutex);
@@ -1277,7 +1273,6 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
 		mutex_unlock(&bdev->bd_mutex);
 		bdput(whole);
 	}
-
 	return res;
 }
 EXPORT_SYMBOL(blkdev_get);
@@ -1308,16 +1303,13 @@ struct block_device *blkdev_get_by_path(const char *path, fmode_t mode,
 	bdev = lookup_bdev(path);
 	if (IS_ERR(bdev))
 		return bdev;
-
 	err = blkdev_get(bdev, mode, holder);
 	if (err)
 		return ERR_PTR(err);
-
 	if ((mode & FMODE_WRITE) && bdev_read_only(bdev)) {
 		blkdev_put(bdev, mode);
 		return ERR_PTR(-EACCES);
 	}
-
 	return bdev;
 }
 EXPORT_SYMBOL(blkdev_get_by_path);

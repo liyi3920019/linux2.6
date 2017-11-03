@@ -16,6 +16,8 @@ extern int root_mountflags;
 static inline int create_dev(char *name, dev_t dev)
 {
 	sys_unlink(name);
+printk("ROOT_DEV=%d\n",dev);
+printk("name=%s\n",name);
 	return sys_mknod(name, S_IFBLK|0600, new_encode_dev(dev));
 }
 

@@ -702,7 +702,6 @@ static struct file *__dentry_open(struct dentry *dentry, struct vfsmount *mnt,
 	}
 
 	f->f_op = fops_get(inode->i_fop);
-
 	error = security_dentry_open(f, cred);
 	if (error)
 		goto cleanup_all;
@@ -809,7 +808,6 @@ struct file *nameidata_to_filp(struct nameidata *nd)
 {
 	const struct cred *cred = current_cred();
 	struct file *filp;
-
 	/* Pick up the filp from the open intent */
 	filp = nd->intent.open.file;
 	nd->intent.open.file = NULL;
@@ -819,6 +817,7 @@ struct file *nameidata_to_filp(struct nameidata *nd)
 		path_get(&nd->path);
 		filp = __dentry_open(nd->path.dentry, nd->path.mnt, filp,
 				     NULL, cred);
+
 	}
 	return filp;
 }

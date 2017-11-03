@@ -778,7 +778,6 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
 	sbi->s_sb_block = sb_block;
 
 	spin_lock_init(&sbi->s_lock);
-printk("$\n");
 	/*
 	 * See what the current blocksize for the device is, and
 	 * use that as the blocksize.  Otherwise (or if the blocksize
@@ -814,13 +813,8 @@ printk("$\n");
 	es = (struct ext2_super_block *) (((char *)bh->b_data) + offset);
 	sbi->s_es = es;
 	sb->s_magic = le16_to_cpu(es->s_magic);
-printk("sb->s_magic=%ld,or =%lu\n",sb->s_magic,sb->s_magic);
-printk("EXT2_SUPER_MAGIC=%ld,or =%lu\n",EXT2_SUPER_MAGIC,EXT2_SUPER_MAGIC);
 	if (sb->s_magic != EXT2_SUPER_MAGIC)
-{printk("$!\n");
 		goto cantfind_ext2;
-}
-printk("$$\n");
 	/* Set defaults before we parse the mount options */
 	def_mount_opts = le32_to_cpu(es->s_default_mount_opts);
 	if (def_mount_opts & EXT2_DEFM_DEBUG)
@@ -849,7 +843,6 @@ printk("$$\n");
 	sbi->s_resgid = le16_to_cpu(es->s_def_resgid);
 	
 	set_opt(sbi->s_mount_opt, RESERVATION);
-printk("$$$\n");
 	if (!parse_options((char *) data, sb))
 		goto failed_mount;
 
@@ -895,7 +888,6 @@ printk("$$$\n");
 				"error: unsupported blocksize for xip");
 		goto failed_mount;
 	}
-printk("$$$$\n");
 	/* If the blocksize doesn't match, re-read the thing.. */
 	if (sb->s_blocksize != blocksize) {
 		brelse(bh);
@@ -938,7 +930,6 @@ printk("$$$$\n");
 			goto failed_mount;
 		}
 	}
-printk("$$$$$\n");
 	sbi->s_frag_size = EXT2_MIN_FRAG_SIZE <<
 				   le32_to_cpu(es->s_log_frag_size);
 	if (sbi->s_frag_size == 0)
@@ -988,7 +979,6 @@ printk("$$$$$\n");
 			sbi->s_blocks_per_group);
 		goto failed_mount;
 	}
-printk("$$$$$$\n");
 	if (sbi->s_frags_per_group > sb->s_blocksize * 8) {
 		ext2_msg(sb, KERN_ERR,
 			"error: #fragments per group too big: %lu",
@@ -1031,7 +1021,6 @@ printk("$$$$$$\n");
 			goto failed_mount_group_desc;
 		}
 	}
-printk("$$$$$$$\n");
 	if (!ext2_check_descriptors (sb)) {
 		ext2_msg(sb, KERN_ERR, "group descriptors corrupted");
 		goto failed_mount2;
@@ -1069,7 +1058,6 @@ printk("$$$$$$$\n");
 		ext2_msg(sb, KERN_ERR, "error: insufficient memory");
 		goto failed_mount3;
 	}
-printk("$$$$$$$$\n");
 	/*
 	 * set up enough so that it can read an inode
 	 */
@@ -1092,7 +1080,6 @@ printk("$$$$$$$$\n");
 		ext2_msg(sb, KERN_ERR, "error: corrupt root inode, run e2fsck");
 		goto failed_mount3;
 	}
-printk("$$$$$$$$$\n");
 	sb->s_root = d_alloc_root(root);
 	if (!sb->s_root) {
 		iput(root);
@@ -1107,14 +1094,11 @@ printk("$$$$$$$$$\n");
 		sb->s_flags |= MS_RDONLY;
 	ext2_write_super(sb);
 	return 0;
-printk("$$$$$$$$$$\n");
 cantfind_ext2:
-printk("$!!\n");
 	if (!silent)
 		ext2_msg(sb, KERN_ERR,
 			"error: can't find an ext2 filesystem on dev %s.",
 			sb->s_id);
-printk("$!!!\n");
 	goto failed_mount;
 failed_mount3:
 	percpu_counter_destroy(&sbi->s_freeblocks_counter);
@@ -1133,7 +1117,6 @@ failed_sbi:
 	kfree(sbi->s_blockgroup_lock);
 	kfree(sbi);
 failed_unlock:
-printk("$ret=%d\n",ret);
 	return ret;
 }
 
@@ -1506,15 +1489,12 @@ static struct file_system_type ext2_fs_type = {
 static int __init init_ext2_fs(void)
 {
 	int err = init_ext2_xattr();
-printk("ext2_err=%d\n",err);
 	if (err)
 		return err;
 	err = init_inodecache();
-printk("ext2_err0=%d\n",err);
 	if (err)
 		goto out1;
         err = register_filesystem(&ext2_fs_type);
-printk("ext2_err1=%d\n",err);
 	if (err)
 		goto out;
 	return 0;
